@@ -10,26 +10,10 @@ from tqdm import tqdm
 
 from docqa import config
 from docqa.config import CORPUS_DIR
-# TODO: Chinese
-# from docqa.data_processing.text_utils import NltkAndPunctTokenizer
+from docqa.data_processing.text_utils import NltkAndPunctTokenizer
 from docqa.triviaqa.read_data import normalize_wiki_filename
 from docqa.utils import group, split, flatten_iterable
 
-
-class ChineseTokenizer():
-    def __init__(self):
-        return
-
-    def tokenize_paragraph(self, paragraph):
-        sentences = re.split("。|？|！", paragraph)
-        ret = []
-        for sent in sentences:
-            if sent:
-                ret.append([c for c in sent] + ["。"])
-        return ret
-
-    def tokenize_paragraph_flat(self, paragraph):
-        return [c for c in paragraph]
 
 """
 Build and cache a tokenized version of the evidence corpus
@@ -168,7 +152,7 @@ class TriviaQaEvidenceCorpusTxt(object):
     _split_para = re.compile("\n\n+")  # FIXME we should not have saved document w/extra spaces...
 
     def __init__(self, file_id_map=None):
-        self.directory = join(CORPUS_DIR, "new_zh/evidence") #  TODO: Chinese
+        self.directory = join(CORPUS_DIR, "new2/evidence")
         self.file_id_map = file_id_map
 
     def get_vocab(self):
@@ -250,15 +234,13 @@ class TriviaQaEvidenceCorpusTxt(object):
 
 def main():
     parse = argparse.ArgumentParser("Pre-tokenize the TriviaQA evidence corpus")
-    parse.add_argument("-o", "--output_dir", type=str, default=join(config.CORPUS_DIR, "new_zh", "evidence")) # TODO: Chinese
-    parse.add_argument("-s", "--source", type=str, default=join(config.NEW_ZH, "evidence")) # TODO: Chinese
+    parse.add_argument("-o", "--output_dir", type=str, default=join(config.CORPUS_DIR, "new2", "evidence"))
+    parse.add_argument("-s", "--source", type=str, default=join(config.NEW2, "evidence"))
     # This is slow, using more processes is recommended
     parse.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     parse.add_argument("--wiki_only", action="store_true")
     args = parse.parse_args()
-    build_tokenized_corpus(args.source,
-                           ChineseTokenizer(), args.output_dir, # TODO: Chinese,
-                           # NltkAndPunctTokenizer(), args.output_dir,
+    build_tokenized_corpus(args.source, NltkAndPunctTokenizer(), args.output_dir,
                            n_processes=args.n_processes, wiki_only=args.wiki_only)
 
 if __name__ == "__main__":

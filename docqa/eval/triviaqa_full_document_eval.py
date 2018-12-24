@@ -64,7 +64,7 @@ class RecordParagraphSpanPrediction(Evaluator):
             f1 = 0
             em = False
             for answer in data[i].answer.answer_text:
-                ans = " ".join([c for c in answer]) # TODO: Chinese, answer
+                ans = answer
                 f1 = max(f1, trivia_f1_score(pred_text, ans))
                 if not em:
                     em = trivia_em_score(pred_text, ans)

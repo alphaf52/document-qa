@@ -41,8 +41,7 @@ def main():
                                                 ShallowOpenWebRanker(16),
                                                 model.preprocessor, intern=True)
 
-    eval = [LossEvaluator(), MultiParagraphSpanEvaluator(8, # TODO: Chinese
-                                                         "triviaqa", mode != "merge", per_doc=False)]
+    eval = [LossEvaluator(), MultiParagraphSpanEvaluator(8, "triviaqa", mode != "merge", per_doc=False)]
     oversample = [1] * 2  # Sample the top two answer-containing paragraphs twice
 
     if mode == "paragraph":
@@ -63,13 +62,11 @@ def main():
         train = StratifyParagraphSetsBuilder(30, mode == "merge", True, oversample)
 
     data = TriviaQaNewDataset()
-    # print(len(data))
 
     params = TrainParams(
         SerializableOptimizer("Adadelta", dict(learning_rate=1)),
         num_epochs=n_epochs, ema=0.999, max_checkpoints_to_keep=2,
         async_encoding=10, log_period=30, eval_period=1800, save_period=1800,
-        # best_weights=("dev", "loss"), # TODO: Chinese,
         best_weights=("dev", "b8/question-text-f1"),
         eval_samples=dict(dev=None, train=6000)
     )
@@ -78,20 +75,14 @@ def main():
 
     data.preprocess(args.n_processes, 1000)
 
-    # import pickle
-    # pickle.dump(data, open("/data/disk4/private/liujiahua/data.pkl", "wb"))
+    # TODO:
     data.cache_preprocess("/data/disk4/private/liujiahua/data.pkl")
-
-    # print(data)
-    # print(type(data))
-    # print(len(data.get_train()))
-    # print(len(data.get_eval()))
 
     with open(__file__, "r") as f:
         notes = f.read()
     notes = "Mode: " + args.mode + "\n" + notes
 
-    # trainer.start_training(data, model, params, eval, model_dir.ModelDir(out), notes)
+    trainer.start_training(data, model, params, eval, model_dir.ModelDir(out), notes)
 
 
 if __name__ == "__main__":

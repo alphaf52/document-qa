@@ -151,7 +151,7 @@ class ShallowOpenWebRanker(ParagraphFilter):
     def __init__(self, n_to_select):
         self.n_to_select = n_to_select
         self._stop = NltkPlusStopWords(True).words
-        self._tfidf = TfidfVectorizer(strip_accents="unicode", analyzer="char") # TODO: Chinese, stop_words=self._stop)
+        self._tfidf = TfidfVectorizer(strip_accents="unicode", stop_words=self._stop)
 
     def get_features(self, question: List[str], paragraphs: List[List[ExtractedParagraphWithAnswers]]):
         scores = self.score_paragraphs(question, flatten_iterable(paragraphs))
