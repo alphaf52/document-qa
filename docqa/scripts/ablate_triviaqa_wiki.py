@@ -41,7 +41,7 @@ def main():
                                                 ShallowOpenWebRanker(16),
                                                 model.preprocessor, intern=True)
 
-    eval = [LossEvaluator(), MultiParagraphSpanEvaluator(8, # TODO: Chinese
+    eval = [LossEvaluator(), MultiParagraphSpanEvaluator(20, # TODO: Chinese
                                                          "triviaqa", mode != "merge", per_doc=False)]
     oversample = [1] * 2  # Sample the top two answer-containing paragraphs twice
 
@@ -69,8 +69,8 @@ def main():
         SerializableOptimizer("Adadelta", dict(learning_rate=1)),
         num_epochs=n_epochs, ema=0.999, max_checkpoints_to_keep=2,
         async_encoding=10, log_period=30, eval_period=1800, save_period=1800,
-        # best_weights=("dev", "loss"), # TODO: Chinese,
-        best_weights=("dev", "b8/question-text-f1"),
+        best_weights=("dev", "loss"), # TODO: Chinese,
+        # best_weights=("dev", "b8/question-text-f1"),
         eval_samples=dict(dev=None, train=6000)
     )
 
