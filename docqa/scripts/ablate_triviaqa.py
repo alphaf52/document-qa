@@ -79,14 +79,19 @@ def get_model(char_th: int, dim: int, mode: str, preprocess: Optional[TextPrepro
     else:
         raise NotImplementedError(mode)
 
+    # TODO: Chinese
+    """
+    char_embed=CharWordEmbedder(
+        LearnedCharEmbedder(word_size_th=14, char_th=char_th, char_dim=20, init_scale=0.05, force_cpu=True),
+        MaxPool(Conv1d(100, 5, 0.8)),
+        shared_parameters=True
+    ),
+    """
     return Attention(
         encoder=DocumentAndQuestionEncoder(answer_encoder),
-        word_embed=FixedWordEmbedder(vec_name="glove.840B.300d", word_vec_init_scale=0, learn_unk=False, cpu=True),
-        char_embed=CharWordEmbedder(
-            LearnedCharEmbedder(word_size_th=14, char_th=char_th, char_dim=20, init_scale=0.05, force_cpu=True),
-            MaxPool(Conv1d(100, 5, 0.8)),
-            shared_parameters=True
-        ),
+        word_embed=FixedWordEmbedder(vec_name="skip-gram-300", # "glove.840B.300d",
+                                     word_vec_init_scale=0, learn_unk=False, cpu=True),
+        char_embed=None,
         preprocess=preprocess,
         word_embed_layer=None,
         embed_mapper=SequenceMapperSeq(

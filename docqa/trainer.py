@@ -622,7 +622,8 @@ def _train_async(model: Model,
                         # Maybe save as the best weights
                         if train_params.best_weights is not None and name == train_params.best_weights[0]:
                             val = evaluation.scalars[train_params.best_weights[1]]
-                            if cur_best is None or val > cur_best:
+                            print("(%s vs %.5f)" % ("None" if cur_best is None else ("%.5f" % cur_best), val))
+                            if cur_best is None or val < cur_best: # TODO: > cur_best:
                                 print("Save weights with current best weights (%s vs %.5f)" % (
                                     "None" if cur_best is None else ("%.5f" % cur_best), val))
                                 best_weight_saver.save(sess, join(out.best_weight_dir, "best"), global_step=global_step)

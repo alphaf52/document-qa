@@ -7,12 +7,12 @@ from os import mkdir
 from os.path import join, exists
 from typing import List, Optional, Dict
 
-from docqa.config import CORPUS_DIR, TRIVIA_QA, TRIVIA_QA_UNFILTERED
+from docqa.config import CORPUS_DIR, TRIVIA_QA, TRIVIA_QA_UNFILTERED, NEW_ZH
 from docqa.configurable import Configurable
-from docqa.data_processing.text_utils import NltkAndPunctTokenizer
+# TODO: Chinese, from docqa.data_processing.text_utils import NltkAndPunctTokenizer
 from docqa.triviaqa.answer_detection import compute_answer_spans_par, FastNormalizedAnswerDetector
-from docqa.triviaqa.evidence_corpus import TriviaQaEvidenceCorpusTxt
-from docqa.triviaqa.read_data import iter_trivia_question, TriviaQaQuestion
+from docqa.triviaqa.evidence_corpus import TriviaQaEvidenceCorpusTxt, ChineseTokenizer
+from docqa.triviaqa.read_data import iter_trivia_question, TriviaQaQuestion, iter_new_question
 from docqa.utils import ResourceLoader
 
 """
@@ -26,7 +26,8 @@ already been preprocessed
 def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
                   answer_detector, n_process: int, prune_unmapped_docs=True,
                   sample=None):
-    out_dir = join(CORPUS_DIR, "triviaqa", name)
+    # out_dir = join(CORPUS_DIR, "triviaqa", name)
+    out_dir = join(CORPUS_DIR, "new_zh", name) # TODO: Chinese
     if not exists(out_dir):
         mkdir(out_dir)
 
@@ -35,12 +36,15 @@ def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
     for name, filename in train_files.items():
         print("Loading %s questions" % name)
         if sample is None:
-            questions = list(iter_trivia_question(filename, file_map, False))
+            # questions = list(iter_trivia_question(filename, file_map, False))
+            questions = list(iter_new_question(filename, file_map))
         else:
             if isinstance(sample,  int):
-                questions = list(islice(iter_trivia_question(filename, file_map, False), sample))
+                # questions = list(islice(iter_trivia_question(filename, file_map, False), sample))
+                questions = list(islice(iter_new_question(filename, file_map), sample))
             elif isinstance(sample, dict):
-                questions = list(islice(iter_trivia_question(filename, file_map, False), sample[name]))
+                # questions = list(islice(iter_trivia_question(filename, file_map, False), sample[name]))
+                questions = list(islice(iter_new_question(filename, file_map), sample[name]))
             else:
                 raise ValueError()
 
@@ -53,17 +57,22 @@ def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
         print("Adding answers for %s question" % name)
         corpus = TriviaQaEvidenceCorpusTxt(file_map)
         questions = compute_answer_spans_par(questions, corpus, tokenizer, answer_detector, n_process)
+        new_questions = []
         for q in questions:  # Sanity check, we should have answers for everything (even if of size 0)
             if q.answer is None:
                 continue
+            check = True
             for doc in q.all_docs:
                 if doc.doc_id in file_map:
                     if doc.answer_spans is None:
-                        raise RuntimeError()
+                        check = False
+                        # raise RuntimeError()
+            if check:
+                new_questions.append(q)
 
-        print("Saving %s question" % name)
+        print("Saving %s %d question" % (name, len(new_questions)))
         with open(join(out_dir, name + ".pkl"), "wb") as f:
-            pickle.dump(questions, f)
+            pickle.dump(new_questions, f)
 
     print("Dumping file mapping")
     with open(join(out_dir, "file_map.json"), "w") as f:
@@ -75,7 +84,8 @@ def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
 class TriviaQaSpanCorpus(Configurable):
     def __init__(self, corpus_name):
         self.corpus_name = corpus_name
-        self.dir = join(CORPUS_DIR, "triviaqa", corpus_name)
+        # self.dir = join(CORPUS_DIR, "triviaqa", corpus_name)
+        self.dir = join(CORPUS_DIR, "new_zh", corpus_name) # TODO: Chinese
         with open(join(self.dir, "file_map.json"), "r") as f:
             file_map = json.load(f)
         for k, v in file_map.items():
@@ -107,6 +117,11 @@ class TriviaQaSpanCorpus(Configurable):
     @property
     def name(self):
         return self.corpus_name
+
+
+class TriviaQaNewDataset(TriviaQaSpanCorpus):
+    def __init__(self):
+        super().__init__("new_zh") # TODO: Chinese
 
 
 class TriviaQaWebDataset(TriviaQaSpanCorpus):
@@ -170,10 +185,20 @@ def build_unfiltered_corpus(n_processes):
                   answer_detector=FastNormalizedAnswerDetector(),
                   n_process=n_processes)
 
+def build_new_corpus(n_processes):
+    build_dataset("new_zh", ChineseTokenizer(), # TODO: Chinese,
+                  # "new2", NltkAndPunctTokenizer(),
+                  dict(
+                      dev=join(NEW_ZH, "qa", "dev.json"),
+                      train=join(NEW_ZH, "qa", "train.json"),
+                      test=join(NEW_ZH, "qa", "test.json")
+                  ),
+                  FastNormalizedAnswerDetector(), n_processes)
+
 
 def main():
     parser = argparse.ArgumentParser("Pre-procsess TriviaQA data")
-    parser.add_argument("corpus", choices=["web", "wiki", "web-open"])
+    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "new_zh"]) # TODO: Chinese
     parser.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     args = parser.parse_args()
     if args.corpus == "web":
@@ -182,6 +207,8 @@ def main():
         build_wiki_corpus(args.n_processes)
     elif args.corpus == "web-open":
         build_unfiltered_corpus(args.n_processes)
+    elif args.corpus == "new_zh": # TODO: Chinese
+        build_new_corpus(args.n_processes)
     else:
         raise RuntimeError()
 

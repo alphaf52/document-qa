@@ -18,7 +18,7 @@ from docqa.dataset import FixedOrderBatcher
 from docqa.eval.ranked_scores import compute_ranked_scores
 from docqa.evaluator import Evaluator, Evaluation
 from docqa.model_dir import ModelDir
-from docqa.triviaqa.build_span_corpus import TriviaQaWebDataset, TriviaQaOpenDataset, TriviaQaWikiDataset
+from docqa.triviaqa.build_span_corpus import TriviaQaWebDataset, TriviaQaOpenDataset, TriviaQaWikiDataset, TriviaQaNewDataset
 from docqa.triviaqa.read_data import normalize_wiki_filename
 from docqa.triviaqa.training_data import DocumentParagraphQuestion, ExtractMultiParagraphs, \
     ExtractMultiParagraphsPerQuestion
@@ -64,9 +64,10 @@ class RecordParagraphSpanPrediction(Evaluator):
             f1 = 0
             em = False
             for answer in data[i].answer.answer_text:
-                f1 = max(f1, trivia_f1_score(pred_text, answer))
+                ans = " ".join([c for c in answer]) # TODO: Chinese, answer
+                f1 = max(f1, trivia_f1_score(pred_text, ans))
                 if not em:
-                    em = trivia_em_score(pred_text, answer)
+                    em = trivia_em_score(pred_text, ans)
 
             pred_f1s[i] = f1
             pred_em[i] = em
@@ -113,7 +114,7 @@ def main():
                         help="Max answer span to select")
     parser.add_argument('-c', '--corpus',
                         choices=["web-dev", "web-test", "web-verified-dev", "web-train",
-                                 "open-dev", "open-train", "wiki-dev", "wiki-test"],
+                                 "open-dev", "open-train", "wiki-dev", "wiki-test", "new-dev", "new-test"],
                         default="web-verified-dev")
     args = parser.parse_args()
 
@@ -140,7 +141,7 @@ def main():
             test_questions = dataset.get_test()
         else:
             raise AssertionError()
-    else:
+    elif args.corpus.startswith("open"):
         dataset = TriviaQaOpenDataset()
         if args.corpus == "open-dev":
             test_questions = dataset.get_dev()
@@ -148,6 +149,34 @@ def main():
             test_questions = dataset.get_train()
         else:
             raise AssertionError()
+    elif args.corpus.startswith("new"):
+        dataset = TriviaQaNewDataset()
+        if args.corpus == "new-dev":
+            test_questions = dataset.get_dev()
+        elif args.corpus == "new-test":
+            test_questions = dataset.get_test()
+        else:
+            raise AssertionError()
+    else:
+        raise AssertionError()
+
+    # TODO:
+    """
+    single_sent_set = set()
+    with open("single_sentence_questions.txt", "r") as fin:
+      for line in fin:
+        single_sent_set.add(line.strip())
+
+    no_answer_set = set()
+    with open("no_answer_questions.txt", "r") as fin:
+      for line in fin:
+        no_answer_set.add(line.strip())
+
+    test_questions = [q for q in test_questions if q.question_id in single_sent_set]
+    print("Test on questions that could be answered with single sentence")
+    # test_questions = [q for q in test_questions if not q.question_id in single_sent_set and not q.question_id in no_answer_set]
+    # print("Test on questions that could NOT be answered with single sentence")
+    """
 
     corpus = dataset.evidence
     splitter = MergeParagraphs(args.tokens)
@@ -293,9 +322,7 @@ def main():
     table = [["N Paragraphs", "EM", "F1"]]
     table += list([str(i+1), "%.4f" % e, "%.4f" % f] for i, (e, f) in enumerate(zip(em, f1)))
     print_table(table)
+
 if __name__ == "__main__":
     main()
-
-
-
 

@@ -46,5 +46,5 @@ def load_word_vector_file(vec_path: str, vocab: Optional[Iterable[str]] = None):
             word_ix = line.find(" ")
             word = line[:word_ix]
             if (vocab is None) or (word.lower() in vocab):
-                pruned_dict[word] = np.array([float(x) for x in line[word_ix + 1:-1].split(" ")], dtype=np.float32)
+                pruned_dict[word] = np.array([float(x) for x in line[word_ix + 1:-1].strip().split(" ")], dtype=np.float32) # TODO
     return pruned_dict

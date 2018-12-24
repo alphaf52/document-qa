@@ -343,3 +343,39 @@ def iter_trivia_question(filename, file_map, require_filename):
     return build_questions(iter_question_json(filename), file_map, require_filename)
 
 
+class NewAnswer(object):
+    __slots__ = ["answers", "normalized_aliases"]
+
+    def __init__(self, answers):
+        self.answers = answers
+        # self.normalized_aliases = [triviaqa_normalize_answer(x) for x in self.answers]
+        # TODO: Chinese
+        self.normalized_aliases = [x if not '(' in x else x[:x.find('(')].strip() for x in self.answers]
+
+    @property
+    def all_answers(self):
+        return self.normalized_aliases
+
+    def __repr__(self) -> str:
+        return self.answers[0]
+
+
+def iter_new_question(filename, file_map):
+    with open(filename, "r") as f:
+        for line in f:
+            item = json.loads(line.strip())
+
+            question = item['question']
+            question_id = item['question_id']
+            answer = NewAnswer(item['answers'])
+
+            entity_pages = []
+            for (subdir, filename) in item['docs']:
+                title = filename[:filename.rfind('.')] if filename.rfind('.') != -1 else filename
+                filepath = join(subdir, title)
+                file_map[title] = filepath
+                entity_pages.append(SearchEntityDoc(title))
+            web_pages = None
+
+            yield TriviaQaQuestion(question, question_id, answer, entity_pages, web_pages)
+
