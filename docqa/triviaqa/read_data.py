@@ -348,9 +348,7 @@ class NewAnswer(object):
 
     def __init__(self, answers):
         self.answers = answers
-        # self.normalized_aliases = [triviaqa_normalize_answer(x) for x in self.answers]
-        # TODO: Chinese
-        self.normalized_aliases = [x if not '(' in x else x[:x.find('(')].strip() for x in self.answers]
+        self.normalized_aliases = [triviaqa_normalize_answer(x) for x in self.answers]
 
     @property
     def all_answers(self):
