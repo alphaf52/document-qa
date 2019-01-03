@@ -75,8 +75,8 @@ def main():
 
     data.preprocess(args.n_processes, 1000)
 
-    # TODO:
-    data.cache_preprocess("/data/disk4/private/liujiahua/data.pkl")
+    # dump preprocessed training data for bert
+    data.cache_preprocess("train_data.pkl")
 
     with open(__file__, "r") as f:
         notes = f.read()

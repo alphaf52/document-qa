@@ -231,6 +231,10 @@ def main():
     # Reverse so our first batch will be the largest (so OOMs happen early)
     questions = sorted(data, key=lambda x: (x.n_context_words, len(x.question)), reverse=True)
 
+    # dump eval data for bert
+    import pickle
+    pickle.dump(questions, open("eval_questions.pkl", "wb"))
+
     print("Done, starting eval")
 
     if args.step is not None:
