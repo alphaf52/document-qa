@@ -78,14 +78,8 @@ def main():
 
     data.preprocess(args.n_processes, 1000)
 
-    # import pickle
-    # pickle.dump(data, open("/data/disk4/private/liujiahua/data.pkl", "wb"))
-    data.cache_preprocess("/data/disk4/private/liujiahua/data.pkl")
-
-    # print(data)
-    # print(type(data))
-    # print(len(data.get_train()))
-    # print(len(data.get_eval()))
+    # dump preprocessed training data for bert
+    data.cache_preprocess("train_data.pkl")
 
     with open(__file__, "r") as f:
         notes = f.read()
