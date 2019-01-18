@@ -152,7 +152,7 @@ class TriviaQaEvidenceCorpusTxt(object):
     _split_para = re.compile("\n\n+")  # FIXME we should not have saved document w/extra spaces...
 
     def __init__(self, file_id_map=None):
-        self.directory = join(CORPUS_DIR, "new2/evidence")
+        self.directory = join(CORPUS_DIR, "wiki_en/evidence")
         self.file_id_map = file_id_map
 
     def get_vocab(self):
@@ -234,8 +234,8 @@ class TriviaQaEvidenceCorpusTxt(object):
 
 def main():
     parse = argparse.ArgumentParser("Pre-tokenize the TriviaQA evidence corpus")
-    parse.add_argument("-o", "--output_dir", type=str, default=join(config.CORPUS_DIR, "new2", "evidence"))
-    parse.add_argument("-s", "--source", type=str, default=join(config.NEW2, "evidence"))
+    parse.add_argument("-o", "--output_dir", type=str, default=join(config.CORPUS_DIR, "wiki_en", "evidence"))
+    parse.add_argument("-s", "--source", type=str, default=join(config.NEW_EN, "evidence"))
     # This is slow, using more processes is recommended
     parse.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     parse.add_argument("--wiki_only", action="store_true")
