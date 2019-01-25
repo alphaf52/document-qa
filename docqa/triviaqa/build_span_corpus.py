@@ -7,7 +7,7 @@ from os import mkdir
 from os.path import join, exists
 from typing import List, Optional, Dict
 
-from docqa.config import CORPUS_DIR, TRIVIA_QA, TRIVIA_QA_UNFILTERED, NEW_FR_TRANS
+from docqa.config import CORPUS_DIR, TRIVIA_QA, TRIVIA_QA_UNFILTERED, CORPUS_NAME_TO_PATH
 from docqa.configurable import Configurable
 from docqa.data_processing.text_utils import NltkAndPunctTokenizer
 from docqa.triviaqa.answer_detection import compute_answer_spans_par, FastNormalizedAnswerDetector
@@ -23,11 +23,11 @@ already been preprocessed
 """
 
 
-def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
+def build_dataset(corpus_name: str, tokenizer, train_files: Dict[str, str],
                   answer_detector, n_process: int, prune_unmapped_docs=True,
                   sample=None):
     # out_dir = join(CORPUS_DIR, "triviaqa", name)
-    out_dir = join(CORPUS_DIR, "wiki_fr_trans_en", name)
+    out_dir = join(CORPUS_DIR, corpus_name, corpus_name)
     if not exists(out_dir):
         mkdir(out_dir)
 
@@ -55,7 +55,8 @@ def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
                 q.entity_docs = [x for x in q.entity_docs if x.doc_id in file_map]
 
         print("Adding answers for %s question" % name)
-        corpus = TriviaQaEvidenceCorpusTxt(file_map)
+        corpus = TriviaQaEvidenceCorpusTxt(corpus_name, file_map)
+
         questions = compute_answer_spans_par(questions, corpus, tokenizer, answer_detector, n_process)
         new_questions = []
         for q in questions:  # Sanity check, we should have answers for everything (even if of size 0)
@@ -85,12 +86,12 @@ class TriviaQaSpanCorpus(Configurable):
     def __init__(self, corpus_name):
         self.corpus_name = corpus_name
         # self.dir = join(CORPUS_DIR, "triviaqa", corpus_name)
-        self.dir = join(CORPUS_DIR, "wiki_fr_trans_en", corpus_name)
+        self.dir = join(CORPUS_DIR, corpus_name, corpus_name)
         with open(join(self.dir, "file_map.json"), "r") as f:
             file_map = json.load(f)
         for k, v in file_map.items():
             file_map[k] = unicodedata.normalize("NFD", v)
-        self.evidence = TriviaQaEvidenceCorpusTxt(file_map)
+        self.evidence = TriviaQaEvidenceCorpusTxt(corpus_name, file_map)
 
     def get_train(self) -> List[TriviaQaQuestion]:
         with open(join(self.dir, "train.pkl"), "rb") as f:
@@ -120,8 +121,8 @@ class TriviaQaSpanCorpus(Configurable):
 
 
 class TriviaQaNewDataset(TriviaQaSpanCorpus):
-    def __init__(self):
-        super().__init__("wiki_fr_trans_en")
+    def __init__(self, name):
+        super().__init__(name)
 
 
 class TriviaQaWebDataset(TriviaQaSpanCorpus):
@@ -185,18 +186,18 @@ def build_unfiltered_corpus(n_processes):
                   answer_detector=FastNormalizedAnswerDetector(),
                   n_process=n_processes)
 
-def build_new_corpus(n_processes):
-    build_dataset("wiki_fr_trans_en", NltkAndPunctTokenizer(),
+def build_new_corpus(corpus_name, n_processes):
+    build_dataset(corpus_name, NltkAndPunctTokenizer(),
                   dict(
-                      dev=join(NEW_FR_TRANS, "qa", "dev.json"),
-                      test=join(NEW_FR_TRANS, "qa", "test.json")
+                      dev=join(CORPUS_NAME_TO_PATH[corpus_name], "qa", "dev.json"),
+                      test=join(CORPUS_NAME_TO_PATH[corpus_name], "qa", "test.json")
                   ),
                   FastNormalizedAnswerDetector(), n_processes)
 
 
 def main():
     parser = argparse.ArgumentParser("Pre-procsess TriviaQA data")
-    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_fr_trans_en"])
+    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en", "wiki_ru_trans_en", "wiki_pt_trans_en"])
     parser.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     args = parser.parse_args()
     if args.corpus == "web":
@@ -205,8 +206,8 @@ def main():
         build_wiki_corpus(args.n_processes)
     elif args.corpus == "web-open":
         build_unfiltered_corpus(args.n_processes)
-    elif args.corpus == "wiki_fr_trans_en":
-        build_new_corpus(args.n_processes)
+    elif args.corpus == "wiki_fr_trans_en" or args.corpus == "wiki_de_trans_en" or args.corpus == "wiki_ru_trans_en" or args.corpus == "wiki_pt_trans_en":
+        build_new_corpus(args.corpus, args.n_processes)
     else:
         raise RuntimeError()
 

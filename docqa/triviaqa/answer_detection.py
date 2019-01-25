@@ -241,6 +241,7 @@ def compute_answer_spans(questions: List[TriviaQaQuestion], corpus, word_tokeniz
         for doc in q.all_docs:
             text = corpus.get_document(doc.doc_id)
             if text is None:
+                print(doc.doc_id)
                 raise ValueError()
             spans = []
             offset = 0

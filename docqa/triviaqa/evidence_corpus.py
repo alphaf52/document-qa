@@ -9,7 +9,7 @@ from typing import Set
 from tqdm import tqdm
 
 from docqa import config
-from docqa.config import CORPUS_DIR
+from docqa.config import CORPUS_DIR, CORPUS_NAME_TO_PATH
 from docqa.data_processing.text_utils import NltkAndPunctTokenizer
 from docqa.triviaqa.read_data import normalize_wiki_filename
 from docqa.utils import group, split, flatten_iterable
@@ -151,8 +151,11 @@ class TriviaQaEvidenceCorpusTxt(object):
     _split_all = re.compile("[\n ]")
     _split_para = re.compile("\n\n+")  # FIXME we should not have saved document w/extra spaces...
 
-    def __init__(self, file_id_map=None):
-        self.directory = join(CORPUS_DIR, "wiki_fr_trans_en/evidence")
+    def __init__(self, name, file_id_map=None):
+        self.directory = join(CORPUS_DIR, name, "evidence")
+        print("corpus name !: ", name)
+        print("corpus path !: ", self.directory)
+
         self.file_id_map = file_id_map
 
     def get_vocab(self):
@@ -234,13 +237,15 @@ class TriviaQaEvidenceCorpusTxt(object):
 
 def main():
     parse = argparse.ArgumentParser("Pre-tokenize the TriviaQA evidence corpus")
-    parse.add_argument("-o", "--output_dir", type=str, default=join(config.CORPUS_DIR, "wiki_fr_trans_en", "evidence"))
-    parse.add_argument("-s", "--source", type=str, default=join(config.NEW_FR_TRANS, "evidence"))
+    parse.add_argument("--corpus", choices=["wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en", "wiki_ru_trans_en", "wiki_pt_trans_en"], required=True)
     # This is slow, using more processes is recommended
     parse.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     parse.add_argument("--wiki_only", action="store_true")
     args = parse.parse_args()
-    build_tokenized_corpus(args.source, NltkAndPunctTokenizer(), args.output_dir,
+
+    output_dir = join(config.CORPUS_DIR, args.corpus, "evidence")
+    source = join(config.CORPUS_NAME_TO_PATH[args.corpus], "evidence")
+    build_tokenized_corpus(source, NltkAndPunctTokenizer(), output_dir,
                            n_processes=args.n_processes, wiki_only=args.wiki_only)
 
 if __name__ == "__main__":

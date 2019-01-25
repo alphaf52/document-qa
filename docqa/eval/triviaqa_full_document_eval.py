@@ -114,7 +114,17 @@ def main():
                         help="Max answer span to select")
     parser.add_argument('-c', '--corpus',
                         choices=["web-dev", "web-test", "web-verified-dev", "web-train",
-                                 "open-dev", "open-train", "wiki-dev", "wiki-test", "new-dev", "new-test"],
+                                 "open-dev", "open-train", "wiki-dev", "wiki-test",
+                                 "wiki_en_dev",
+                                 "wiki_en_test",
+                                 "wiki_fr_trans_en_dev",
+                                 "wiki_fr_trans_en_test",
+                                 "wiki_de_trans_en_dev",
+                                 "wiki_de_trans_en_test",
+                                 "wiki_ru_trans_en_dev",
+                                 "wiki_ru_trans_en_test",
+                                 "wiki_pt_trans_en_dev",
+                                 "wiki_pt_trans_en_test"],
                         default="web-verified-dev")
     args = parser.parse_args()
 
@@ -133,7 +143,7 @@ def main():
             test_questions = dataset.get_train()
         else:
             raise AssertionError()
-    elif args.corpus.startswith("wiki"):
+    elif args.corpus.startswith("wiki-"):
         dataset = TriviaQaWikiDataset()
         if args.corpus == "wiki-dev":
             test_questions = dataset.get_dev()
@@ -149,16 +159,16 @@ def main():
             test_questions = dataset.get_train()
         else:
             raise AssertionError()
-    elif args.corpus.startswith("new"):
-        dataset = TriviaQaNewDataset()
-        if args.corpus == "new-dev":
+    else:
+        corpus_name = args.corpus[:args.corpus.rfind("_")]
+        eval_set = args.corpus[args.corpus.rfind("_")+1:]
+        dataset = TriviaQaNewDataset(corpus_name)
+        if eval_set == "dev":
             test_questions = dataset.get_dev()
-        elif args.corpus == "new-test":
+        elif eval_set == "test":
             test_questions = dataset.get_test()
         else:
             raise AssertionError()
-    else:
-        raise AssertionError()
 
     # TODO:
     """
