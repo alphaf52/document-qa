@@ -197,7 +197,11 @@ def build_new_corpus(corpus_name, n_processes):
 
 def main():
     parser = argparse.ArgumentParser("Pre-procsess TriviaQA data")
-    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en", "wiki_ru_trans_en", "wiki_pt_trans_en"])
+    parser.add_argument("corpus", choices=["web", "wiki", "web-open",
+                                           "wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en",
+                                           "wiki_ru_trans_en", "wiki_pt_trans_en",  "wiki_zh_trans_en",
+                                           "wiki_fr_ori", "wiki_de_ori", "wiki_ru_ori",
+                                           "wiki_pt_ori", "wiki_zh_ori"])
     parser.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     args = parser.parse_args()
     if args.corpus == "web":
@@ -206,10 +210,8 @@ def main():
         build_wiki_corpus(args.n_processes)
     elif args.corpus == "web-open":
         build_unfiltered_corpus(args.n_processes)
-    elif args.corpus == "wiki_fr_trans_en" or args.corpus == "wiki_de_trans_en" or args.corpus == "wiki_ru_trans_en" or args.corpus == "wiki_pt_trans_en":
-        build_new_corpus(args.corpus, args.n_processes)
     else:
-        raise RuntimeError()
+        build_new_corpus(args.corpus, args.n_processes)
 
 
 if __name__ == "__main__":

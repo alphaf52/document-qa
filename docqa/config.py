@@ -17,6 +17,12 @@ NEW_FR_TRANS = "/data1/private/liujiahua/wiki_data_fr/translate_en"
 NEW_DE_TRANS = "/data1/private/liujiahua/wiki_data_de/translate_en"
 NEW_RU_TRANS = "/data1/private/liujiahua/wiki_data_ru/translate_en"
 NEW_PT_TRANS = "/data1/private/liujiahua/wiki_data_pt/translate_en"
+NEW_ZH_TRANS = "/data1/private/liujiahua/wiki_data_zh/translate_en"
+NEW_FR_ORI = "/data1/private/liujiahua/wiki_data_fr"
+NEW_DE_ORI = "/data1/private/liujiahua/wiki_data_de"
+NEW_RU_ORI = "/data1/private/liujiahua/wiki_data_ru"
+NEW_PT_ORI = "/data1/private/liujiahua/wiki_data_pt"
+NEW_ZH_ORI = "/data1/private/liujiahua/wiki_data_zh"
 
 CORPUS_NAME_TO_PATH = {
   "wiki_en": NEW_EN,
@@ -24,6 +30,12 @@ CORPUS_NAME_TO_PATH = {
   "wiki_de_trans_en": NEW_DE_TRANS,
   "wiki_ru_trans_en": NEW_RU_TRANS,
   "wiki_pt_trans_en": NEW_PT_TRANS,
+  "wiki_zh_trans_en": NEW_ZH_TRANS,
+  "wiki_fr_ori": NEW_FR_ORI,
+  "wiki_de_ori": NEW_DE_ORI,
+  "wiki_ru_ori": NEW_RU_ORI,
+  "wiki_pt_ori": NEW_PT_ORI,
+  "wiki_zh_ori": NEW_ZH_ORI,
 }
 
 # TRIVIA_QA = join(expanduser("~"), "data", "triviaqa")

@@ -237,7 +237,11 @@ class TriviaQaEvidenceCorpusTxt(object):
 
 def main():
     parse = argparse.ArgumentParser("Pre-tokenize the TriviaQA evidence corpus")
-    parse.add_argument("--corpus", choices=["wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en", "wiki_ru_trans_en", "wiki_pt_trans_en"], required=True)
+    parse.add_argument("--corpus",
+                       choices=["wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en",
+                                "wiki_ru_trans_en", "wiki_pt_trans_en", "wiki_zh_trans_en",
+                                "wiki_fr_ori", "wiki_de_ori", "wiki_ru_ori", "wiki_pt_ori", "wiki_zh_ori"],
+                       required=True)
     # This is slow, using more processes is recommended
     parse.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     parse.add_argument("--wiki_only", action="store_true")

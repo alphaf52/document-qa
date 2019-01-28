@@ -117,6 +117,16 @@ def main():
                                  "open-dev", "open-train", "wiki-dev", "wiki-test",
                                  "wiki_en_dev",
                                  "wiki_en_test",
+                                 "wiki_fr_ori_dev",
+                                 "wiki_fr_ori_test",
+                                 "wiki_de_ori_dev",
+                                 "wiki_de_ori_test",
+                                 "wiki_ru_ori_dev",
+                                 "wiki_ru_ori_test",
+                                 "wiki_pt_ori_dev",
+                                 "wiki_pt_ori_test",
+                                 "wiki_zh_ori_dev",
+                                 "wiki_zh_ori_test",
                                  "wiki_fr_trans_en_dev",
                                  "wiki_fr_trans_en_test",
                                  "wiki_de_trans_en_dev",
@@ -124,7 +134,9 @@ def main():
                                  "wiki_ru_trans_en_dev",
                                  "wiki_ru_trans_en_test",
                                  "wiki_pt_trans_en_dev",
-                                 "wiki_pt_trans_en_test"],
+                                 "wiki_pt_trans_en_test",
+                                 "wiki_zh_trans_en_dev",
+                                 "wiki_zh_trans_en_test"],
                         default="web-verified-dev")
     args = parser.parse_args()
 
@@ -243,7 +255,7 @@ def main():
 
     # dump eval data for bert
     import pickle
-    pickle.dump(questions, open("eval_questions.pkl", "wb"))
+    pickle.dump(questions, open("%s_%d.pkl" % (args.corpus, args.n_paragraphs), "wb"))
 
     print("Done, starting eval")
 
