@@ -114,7 +114,7 @@ def main():
                         help="Max answer span to select")
     parser.add_argument('-c', '--corpus',
                         choices=["web-dev", "web-test", "web-verified-dev", "web-train",
-                                 "open-dev", "open-train", "wiki-dev", "wiki-test", "new-dev", "new-test"],
+                                 "open-dev", "open-train", "wiki-dev", "wiki-test", "wiki_zh_ori_dev", "wiki_zh_ori_test"],
                         default="web-verified-dev")
     args = parser.parse_args()
 
@@ -133,7 +133,7 @@ def main():
             test_questions = dataset.get_train()
         else:
             raise AssertionError()
-    elif args.corpus.startswith("wiki"):
+    elif args.corpus.startswith("wiki-"):
         dataset = TriviaQaWikiDataset()
         if args.corpus == "wiki-dev":
             test_questions = dataset.get_dev()
@@ -149,11 +149,11 @@ def main():
             test_questions = dataset.get_train()
         else:
             raise AssertionError()
-    elif args.corpus.startswith("new"):
+    elif args.corpus.startswith("wiki_zh_ori"):
         dataset = TriviaQaNewDataset()
-        if args.corpus == "new-dev":
+        if args.corpus == "wiki_zh_ori_dev":
             test_questions = dataset.get_dev()
-        elif args.corpus == "new-test":
+        elif args.corpus == "wiki_zh_ori_test":
             test_questions = dataset.get_test()
         else:
             raise AssertionError()
@@ -233,7 +233,7 @@ def main():
 
     # dump eval data for bert
     import pickle
-    pickle.dump(questions, open("eval_questions.pkl", "wb"))
+    pickle.dump(questions, open("%s_%d.pkl" % (args.corpus, args.n_paragraphs), "wb"))
 
     print("Done, starting eval")
 

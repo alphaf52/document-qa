@@ -16,7 +16,7 @@ SQUAD_DEV = join(SQUAD_SOURCE_DIR, "dev-v1.1.json")
 # NEW2 = "/data/disk1/private/liujiahua/sequence_doc_without_first_paragraph"
 # NEW3 = "/data/disk1/private/liujiahua/sequence_doc_without_title"
 
-NEW_ZH = "/data/disk1/private/liujiahua/sequence_doc_zh"
+NEW_ZH_ORI = "/data1/private/liujiahua/wiki_data_zh"
 
 # TRIVIA_QA = join(expanduser("~"), "data", "triviaqa")
 TRIVIA_QA = "/data/disk1/private/liujiahua/triviaqa_sample"

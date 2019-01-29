@@ -7,7 +7,7 @@ from os import mkdir
 from os.path import join, exists
 from typing import List, Optional, Dict
 
-from docqa.config import CORPUS_DIR, TRIVIA_QA, TRIVIA_QA_UNFILTERED, NEW_ZH
+from docqa.config import CORPUS_DIR, TRIVIA_QA, TRIVIA_QA_UNFILTERED, NEW_ZH_ORI
 from docqa.configurable import Configurable
 # TODO: Chinese, from docqa.data_processing.text_utils import NltkAndPunctTokenizer
 from docqa.triviaqa.answer_detection import compute_answer_spans_par, FastNormalizedAnswerDetector
@@ -27,7 +27,7 @@ def build_dataset(name: str, tokenizer, train_files: Dict[str, str],
                   answer_detector, n_process: int, prune_unmapped_docs=True,
                   sample=None):
     # out_dir = join(CORPUS_DIR, "triviaqa", name)
-    out_dir = join(CORPUS_DIR, "new_zh", name) # TODO: Chinese
+    out_dir = join(CORPUS_DIR, "wiki_zh_ori", name) # TODO: Chinese
     if not exists(out_dir):
         mkdir(out_dir)
 
@@ -85,7 +85,7 @@ class TriviaQaSpanCorpus(Configurable):
     def __init__(self, corpus_name):
         self.corpus_name = corpus_name
         # self.dir = join(CORPUS_DIR, "triviaqa", corpus_name)
-        self.dir = join(CORPUS_DIR, "new_zh", corpus_name) # TODO: Chinese
+        self.dir = join(CORPUS_DIR, "wiki_zh_ori", corpus_name) # TODO: Chinese
         with open(join(self.dir, "file_map.json"), "r") as f:
             file_map = json.load(f)
         for k, v in file_map.items():
@@ -121,7 +121,7 @@ class TriviaQaSpanCorpus(Configurable):
 
 class TriviaQaNewDataset(TriviaQaSpanCorpus):
     def __init__(self):
-        super().__init__("new_zh") # TODO: Chinese
+        super().__init__("wiki_zh_ori") # TODO: Chinese
 
 
 class TriviaQaWebDataset(TriviaQaSpanCorpus):
@@ -186,19 +186,19 @@ def build_unfiltered_corpus(n_processes):
                   n_process=n_processes)
 
 def build_new_corpus(n_processes):
-    build_dataset("new_zh", ChineseTokenizer(), # TODO: Chinese,
+    build_dataset("wiki_zh_ori", ChineseTokenizer(), # TODO: Chinese,
                   # "new2", NltkAndPunctTokenizer(),
                   dict(
-                      dev=join(NEW_ZH, "qa", "dev.json"),
-                      train=join(NEW_ZH, "qa", "train.json"),
-                      test=join(NEW_ZH, "qa", "test.json")
+                      dev=join(NEW_ZH_ORI, "qa", "dev.json"),
+                      train=join(NEW_ZH_ORI, "qa", "train.json"),
+                      test=join(NEW_ZH_ORI, "qa", "test.json")
                   ),
                   FastNormalizedAnswerDetector(), n_processes)
 
 
 def main():
     parser = argparse.ArgumentParser("Pre-procsess TriviaQA data")
-    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "new_zh"]) # TODO: Chinese
+    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_zh_ori"]) # TODO: Chinese
     parser.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     args = parser.parse_args()
     if args.corpus == "web":
@@ -207,7 +207,7 @@ def main():
         build_wiki_corpus(args.n_processes)
     elif args.corpus == "web-open":
         build_unfiltered_corpus(args.n_processes)
-    elif args.corpus == "new_zh": # TODO: Chinese
+    elif args.corpus == "wiki_zh_ori": # TODO: Chinese
         build_new_corpus(args.n_processes)
     else:
         raise RuntimeError()
