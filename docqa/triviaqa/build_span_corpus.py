@@ -200,8 +200,10 @@ def main():
     parser.add_argument("corpus", choices=["web", "wiki", "web-open",
                                            "wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en",
                                            "wiki_ru_trans_en", "wiki_pt_trans_en",  "wiki_zh_trans_en",
+                                           "wiki_pl_trans_en", "wiki_uk_trans_en", "wiki_ta_trans_en",
                                            "wiki_fr_ori", "wiki_de_ori", "wiki_ru_ori",
-                                           "wiki_pt_ori", "wiki_zh_ori"])
+                                           "wiki_pt_ori", "wiki_zh_ori",
+                                           "wiki_pl_ori", "wiki_uk_ori", "wiki_ta_ori"])
     parser.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     args = parser.parse_args()
     if args.corpus == "web":

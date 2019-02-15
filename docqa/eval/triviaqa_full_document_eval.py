@@ -127,6 +127,12 @@ def main():
                                  "wiki_pt_ori_test",
                                  "wiki_zh_ori_dev",
                                  "wiki_zh_ori_test",
+                                 "wiki_pl_ori_dev",
+                                 "wiki_pl_ori_test",
+                                 "wiki_uk_ori_dev",
+                                 "wiki_uk_ori_test",
+                                 "wiki_ta_ori_dev",
+                                 "wiki_ta_ori_test",
                                  "wiki_fr_trans_en_dev",
                                  "wiki_fr_trans_en_test",
                                  "wiki_de_trans_en_dev",
@@ -136,7 +142,13 @@ def main():
                                  "wiki_pt_trans_en_dev",
                                  "wiki_pt_trans_en_test",
                                  "wiki_zh_trans_en_dev",
-                                 "wiki_zh_trans_en_test"],
+                                 "wiki_zh_trans_en_test",
+                                 "wiki_pl_trans_en_dev",
+                                 "wiki_pl_trans_en_test",
+                                 "wiki_uk_trans_en_dev",
+                                 "wiki_uk_trans_en_test",
+                                 "wiki_ta_trans_en_dev",
+                                 "wiki_ta_trans_en_test"],
                         default="web-verified-dev")
     args = parser.parse_args()
 
