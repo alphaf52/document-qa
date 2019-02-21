@@ -238,7 +238,8 @@ class TriviaQaEvidenceCorpusTxt(object):
 def main():
     parse = argparse.ArgumentParser("Pre-tokenize the TriviaQA evidence corpus")
     parse.add_argument("--corpus",
-                       choices=["wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en",
+                       choices=["wiki_en", "wiki_en_sample",
+                                "wiki_fr_trans_en", "wiki_de_trans_en",
                                 "wiki_ru_trans_en", "wiki_pt_trans_en", "wiki_zh_trans_en",
                                 "wiki_pl_trans_en", "wiki_uk_trans_en", "wiki_ta_trans_en",
                                 "wiki_fr_ori", "wiki_de_ori", "wiki_ru_ori", "wiki_pt_ori", "wiki_zh_ori",

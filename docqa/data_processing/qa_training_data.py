@@ -252,7 +252,7 @@ def build_spec(batch_size: int,
         context = data_point.get_context()
         max_word_size = max(max_word_size, max(len(word) for word in context))
         max_para_size = max(max_para_size, len(context))
-        if data_point.question is not None:
+        if data_point.question:
             max_ques_size = max(max_ques_size, len(data_point.question))
             max_word_size = max(max_word_size, max(len(word) for word in data_point.question))
     return ParagraphAndQuestionSpec(batch_size, max_ques_size, max_para_size,
