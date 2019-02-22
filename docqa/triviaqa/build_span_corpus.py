@@ -121,8 +121,8 @@ class TriviaQaSpanCorpus(Configurable):
 
 
 class TriviaQaNewDataset(TriviaQaSpanCorpus):
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, corpus_name):
+        super().__init__(corpus_name)
 
 
 class TriviaQaWebDataset(TriviaQaSpanCorpus):

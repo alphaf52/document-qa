@@ -151,9 +151,9 @@ class TriviaQaEvidenceCorpusTxt(object):
     _split_all = re.compile("[\n ]")
     _split_para = re.compile("\n\n+")  # FIXME we should not have saved document w/extra spaces...
 
-    def __init__(self, name, file_id_map=None):
-        self.directory = join(CORPUS_DIR, name, "evidence")
-        print("corpus name !: ", name)
+    def __init__(self, corpus_name, file_id_map=None):
+        self.directory = join(CORPUS_DIR, corpus_name, "evidence")
+        print("corpus name !: ", corpus_name)
         print("corpus path !: ", self.directory)
 
         self.file_id_map = file_id_map

@@ -19,7 +19,7 @@ from docqa.triviaqa.training_data import ExtractMultiParagraphsPerQuestion
 
 def main():
     parser = argparse.ArgumentParser(description='Train a model on TriviaQA wiki')
-    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en", "wiki_ru_trans_en", "wiki_pt_trans_en"])
+    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_en", "wiki_en_trans_de"])
     parser.add_argument('mode', choices=["confidence", "merge", "shared-norm",
                                          "sigmoid", "paragraph"])
     # Note I haven't tested modes other than `shared-norm` on this corpus, so
