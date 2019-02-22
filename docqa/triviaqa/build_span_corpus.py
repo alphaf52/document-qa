@@ -189,6 +189,7 @@ def build_unfiltered_corpus(n_processes):
 def build_new_corpus(corpus_name, n_processes):
     build_dataset(corpus_name, NltkAndPunctTokenizer(),
                   dict(
+                      train=join(CORPUS_NAME_TO_PATH[corpus_name], "qa", "train.json"),
                       dev=join(CORPUS_NAME_TO_PATH[corpus_name], "qa", "dev.json"),
                       test=join(CORPUS_NAME_TO_PATH[corpus_name], "qa", "test.json")
                   ),
@@ -198,7 +199,8 @@ def build_new_corpus(corpus_name, n_processes):
 def main():
     parser = argparse.ArgumentParser("Pre-procsess TriviaQA data")
     parser.add_argument("corpus", choices=["web", "wiki", "web-open",
-                                           "wiki_en", "wiki_fr_trans_en", "wiki_de_trans_en",
+                                           "wiki_en", "wiki_en_sample", "wiki_en_trans_de", "wiki_en_trans_zh",
+                                           "wiki_fr_trans_en", "wiki_de_trans_en",
                                            "wiki_ru_trans_en", "wiki_pt_trans_en",  "wiki_zh_trans_en",
                                            "wiki_pl_trans_en", "wiki_uk_trans_en", "wiki_ta_trans_en",
                                            "wiki_fr_ori", "wiki_de_ori", "wiki_ru_ori",

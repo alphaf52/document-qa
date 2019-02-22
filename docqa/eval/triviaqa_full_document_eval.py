@@ -117,6 +117,7 @@ def main():
                                  "open-dev", "open-train", "wiki-dev", "wiki-test",
                                  "wiki_en_dev",
                                  "wiki_en_test",
+                                 "wiki_en_sample_dev",
                                  "wiki_fr_ori_dev",
                                  "wiki_fr_ori_test",
                                  "wiki_de_ori_dev",
