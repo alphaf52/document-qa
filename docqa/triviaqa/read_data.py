@@ -350,7 +350,7 @@ class NewAnswer(object):
         self.answers = answers
         # self.normalized_aliases = [triviaqa_normalize_answer(x) for x in self.answers]
         # TODO: Chinese
-        self.normalized_aliases = [x if not '(' in x else x[:x.find('(')].strip() for x in self.answers]
+        self.normalized_aliases = [triviaqa_normalize_answer(x) if not '(' in x else x[:x.find('(')].strip() for x in self.answers]
 
     @property
     def all_answers(self):
@@ -367,7 +367,7 @@ def iter_new_question(filename, file_map):
 
             question = item['question']
             question_id = item['question_id']
-            answer = NewAnswer(item['answers'])
+            answer = NewAnswer([ans.strip() for ans in item['answers']])
 
             entity_pages = []
             for (subdir, filename) in item['docs']:

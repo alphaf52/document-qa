@@ -9,7 +9,7 @@ from typing import Set
 from tqdm import tqdm
 
 from docqa import config
-from docqa.config import CORPUS_DIR
+from docqa.config import CORPUS_DIR, CORPUS_NAME_TO_PATH
 # TODO: Chinese
 # from docqa.data_processing.text_utils import NltkAndPunctTokenizer
 from docqa.triviaqa.read_data import normalize_wiki_filename
@@ -167,8 +167,8 @@ class TriviaQaEvidenceCorpusTxt(object):
     _split_all = re.compile("[\n ]")
     _split_para = re.compile("\n\n+")  # FIXME we should not have saved document w/extra spaces...
 
-    def __init__(self, file_id_map=None):
-        self.directory = join(CORPUS_DIR, "wiki_zh_ori/evidence") #  TODO: Chinese
+    def __init__(self, corpus_name, file_id_map=None):
+        self.directory = join(CORPUS_DIR, corpus_name, "evidence") #  TODO: Chinese
         self.file_id_map = file_id_map
 
     def get_vocab(self):
@@ -250,14 +250,20 @@ class TriviaQaEvidenceCorpusTxt(object):
 
 def main():
     parse = argparse.ArgumentParser("Pre-tokenize the TriviaQA evidence corpus")
+    parse.add_argument("--corpus", choices=["wiki_zh_ori", "wiki_en_trans_zh"], required=True)
+
+
     parse.add_argument("-o", "--output_dir", type=str, default=join(config.CORPUS_DIR, "wiki_zh_ori", "evidence")) # TODO: Chinese
     parse.add_argument("-s", "--source", type=str, default=join(config.NEW_ZH_ORI, "evidence")) # TODO: Chinese
     # This is slow, using more processes is recommended
     parse.add_argument("-n", "--n_processes", type=int, default=1, help="Number of processes to use")
     parse.add_argument("--wiki_only", action="store_true")
     args = parse.parse_args()
-    build_tokenized_corpus(args.source,
-                           ChineseTokenizer(), args.output_dir, # TODO: Chinese,
+
+    output_dir = join(config.CORPUS_DIR, args.corpus, "evidence")
+    source = join(config.CORPUS_NAME_TO_PATH[args.corpus], "evidence")
+    build_tokenized_corpus(source,
+                           ChineseTokenizer(), output_dir, # TODO: Chinese,
                            # NltkAndPunctTokenizer(), args.output_dir,
                            n_processes=args.n_processes, wiki_only=args.wiki_only)
 

@@ -19,6 +19,7 @@ from docqa.triviaqa.training_data import ExtractMultiParagraphsPerQuestion
 
 def main():
     parser = argparse.ArgumentParser(description='Train a model on TriviaQA wiki')
+    parser.add_argument("corpus", choices=["web", "wiki", "web-open", "wiki_zh_ori", "wiki_en_trans_zh"])
     parser.add_argument('mode', choices=["confidence", "merge", "shared-norm",
                                          "sigmoid", "paragraph"])
     # Note I haven't tested modes other than `shared-norm` on this corpus, so
@@ -32,6 +33,7 @@ def main():
                         )
     args = parser.parse_args()
     mode = args.mode
+    corpus = args.corpus
 
     out = args.name + "-" + datetime.now().strftime("%m%d-%H%M%S")
 
@@ -62,7 +64,7 @@ def main():
         test = RandomParagraphSetDatasetBuilder(120, "merge" if mode == "merge" else "group", True, oversample)
         train = StratifyParagraphSetsBuilder(30, mode == "merge", True, oversample)
 
-    data = TriviaQaNewDataset()
+    data = TriviaQaNewDataset(corpus)
     # print(len(data))
 
     params = TrainParams(
@@ -85,7 +87,7 @@ def main():
         notes = f.read()
     notes = "Mode: " + args.mode + "\n" + notes
 
-    # trainer.start_training(data, model, params, eval, model_dir.ModelDir(out), notes)
+    trainer.start_training(data, model, params, eval, model_dir.ModelDir(out), notes)
 
 
 if __name__ == "__main__":

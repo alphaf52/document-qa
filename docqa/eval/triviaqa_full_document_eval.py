@@ -114,7 +114,9 @@ def main():
                         help="Max answer span to select")
     parser.add_argument('-c', '--corpus',
                         choices=["web-dev", "web-test", "web-verified-dev", "web-train",
-                                 "open-dev", "open-train", "wiki-dev", "wiki-test", "wiki_zh_ori_dev", "wiki_zh_ori_test"],
+                                 "open-dev", "open-train", "wiki-dev", "wiki-test",
+                                 "wiki_zh_ori_dev", "wiki_zh_ori_test",
+                                 "wiki_en_trans_zh_dev", "wiki_en_trans_zh_test"],
                         default="web-verified-dev")
     args = parser.parse_args()
 
@@ -149,16 +151,16 @@ def main():
             test_questions = dataset.get_train()
         else:
             raise AssertionError()
-    elif args.corpus.startswith("wiki_zh_ori"):
-        dataset = TriviaQaNewDataset()
-        if args.corpus == "wiki_zh_ori_dev":
+    else:
+        corpus_name = args.corpus[:args.corpus.rfind("_")]
+        eval_set = args.corpus[args.corpus.rfind("_")+1:]
+        dataset = TriviaQaNewDataset(corpus_name)
+        if eval_set == "dev":
             test_questions = dataset.get_dev()
-        elif args.corpus == "wiki_zh_ori_test":
+        elif eval_set == "test":
             test_questions = dataset.get_test()
         else:
             raise AssertionError()
-    else:
-        raise AssertionError()
 
     # TODO:
     """
