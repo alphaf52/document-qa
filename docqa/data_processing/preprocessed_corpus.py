@@ -68,7 +68,7 @@ def preprocess_par(questions: List, evidence, preprocessor,
         raise ValueError("Chunk size must be >= 0, but got %s" % chunk_size)
     if n_processes is not None and n_processes <= 0:
         raise ValueError("n_processes must be >= 1 or None, but got %s" % n_processes)
-    n_processes = min(len(questions), n_processes)
+    n_processes = max(min(len(questions), n_processes), 1)
 
     if n_processes == 1:
         out = preprocessor.preprocess(tqdm(questions, desc=name, ncols=80), evidence)
